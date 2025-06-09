@@ -1,5 +1,5 @@
 PYTHON_VERSION = 3.12
-PROJECT_NAME = tradelib
+PROJECT_NAME = coreutils
 TEST_FOLDER_NAME = tests
 
 develop: clean-dev ##@Develop Create virtualenv

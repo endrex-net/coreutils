@@ -1,5 +1,5 @@
 [project]
-name = "tradelib"
+name = "coreutils"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -32,7 +32,7 @@ log_level = "INFO"
 
 [tool.coverage.run]
 branch = true
-source = ["tradelib"]
+source = ["coreutils"]
 command_line = "-m pytest"
 
 [tool.coverage.xml]
@@ -86,7 +86,7 @@ lint.fixable = ["ALL"]
 target-version = "py311"
 
 [tool.ruff.lint.isort]
-known-first-party = ["tradelib" , "tests"]
+known-first-party = ["coreutils" , "tests"]
 lines-after-imports = 2
 
 [tool.ruff.format]

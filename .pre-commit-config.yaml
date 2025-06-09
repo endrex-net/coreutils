@@ -33,7 +33,7 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: mypy ./tradelib/ --config-file ./pyproject.toml
+        entry: mypy ./coreutils/ --config-file ./pyproject.toml
         language: python
         language_version: python3.12
         require_serial: true
