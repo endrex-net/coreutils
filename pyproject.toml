@@ -1,0 +1,111 @@
+[project]
+name = "tradelib"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+aiocache = [
+    "aiocache>=0.12.3",
+]
+structlog = [
+    "structlog>=25.4.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.16.0",
+    "pre-commit>=4.2.0",
+    "ruff>=0.11.13",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+python_files = "test_*"
+python_functions = "test_*"
+python_classes = "TestSuite*"
+addopts = "-p no:cacheprovider"
+asyncio_default_fixture_loop_scope = "function"
+log_level = "INFO"
+
+[tool.coverage.run]
+branch = true
+source = ["tradelib"]
+command_line = "-m pytest"
+
+[tool.coverage.xml]
+output = "coverage_report.xml"
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+skip_empty = true
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == __main__:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "pass",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.ruff]
+line-length = 120
+lint.select = [
+    "BLE",
+    "C90",
+    "E",
+    "F",
+    "G",
+    "I",
+    "ICN",
+    "ISC",
+    "PLE",
+    "Q",
+    "RUF006",
+    "RUF100",
+    "S",
+    "T10",
+    "T20",
+    "TID",
+    "UP",
+    "W",
+]
+lint.ignore = ["ISC001"]
+lint.fixable = ["ALL"]
+target-version = "py311"
+
+[tool.ruff.lint.isort]
+known-first-party = ["tradelib" , "tests"]
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.extend-per-file-ignores]
+"test_*" = ["S101", "S311", "ANN001"]
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = false
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = [
+    "aiocache.*",
+]
+ignore_missing_imports = true
+
