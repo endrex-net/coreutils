@@ -13,12 +13,16 @@ aiocache = [
 structlog = [
     "structlog>=25.4.0",
 ]
+redis = [
+    "redis>=6.2.0",
+]
 
 [dependency-groups]
 dev = [
     "mypy>=1.16.0",
     "pre-commit>=4.2.0",
     "ruff>=0.11.13",
+    "types-redis>=4.6.0.20241004",
 ]
 
 [tool.pytest.ini_options]
@@ -106,6 +110,7 @@ no_implicit_optional = true
 [[tool.mypy.overrides]]
 module = [
     "aiocache.*",
+    "structlog.*",
 ]
 ignore_missing_imports = true
 
