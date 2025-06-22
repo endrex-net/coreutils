@@ -1,17 +1,10 @@
 from collections import Counter
-from collections.abc import MutableMapping, MutableSet
-from typing import Any
+from collections.abc import Generator, Iterator, MutableMapping, MutableSet
+from dataclasses import dataclass
+from typing import (
+    Any,
+)
 from weakref import WeakSet
-
-
-class AbstractStatistic:
-    __metrics__: frozenset[str]
-    __instances__: MutableSet["AbstractStatistic"]
-    _counter: MutableMapping[str, float | int]
-    name: str | None
-
-
-CLASS_STORE: set[type[AbstractStatistic]] = set()
 
 
 class Metric:
@@ -48,6 +41,16 @@ class Metric:
         return hash(self.counter[self.name])
 
 
+class AbstractStatistic:
+    __metrics__: frozenset[str]
+    __instances__: MutableSet["AbstractStatistic"]
+    _counter: MutableMapping[str, float | int]
+    name: str | None
+
+
+CLASS_STORE: set[type[AbstractStatistic]] = set()
+
+
 class MetaStatistic(type):
     def __new__(
         mcs,
@@ -55,8 +58,7 @@ class MetaStatistic(type):
         bases: tuple[type, ...],
         dct: dict[str, Any],
     ) -> Any:
-        # noinspection PyTypeChecker
-        klass: type[AbstractStatistic] = super().__new__(  # type: ignore
+        klass: type[AbstractStatistic] = super().__new__(  # type: ignore[assignment]
             mcs,
             name,
             bases,
@@ -107,3 +109,34 @@ class Statistic(AbstractStatistic, metaclass=MetaStatistic):
             setattr(self, prop, Metric(prop, self._counter))
 
         self.__instances__.add(self)
+
+
+@dataclass(frozen=True)
+class StatisticResult:
+    kind: type[AbstractStatistic]
+    name: str | None
+    metric: str
+    value: float | int
+
+    def __iter__(self) -> Iterator:
+        yield self.kind
+        yield self.name
+        yield self.metric
+        yield self.value
+
+
+def get_statistics(
+    *kind: type[Statistic],
+) -> Generator[Any, tuple[Statistic, str, int], None]:
+    for klass in CLASS_STORE:
+        if kind and not issubclass(klass, kind):
+            continue
+
+        for instance in klass.__instances__:
+            for metric, value in instance._counter.items():
+                yield StatisticResult(
+                    kind=klass,
+                    name=instance.name,
+                    metric=metric,
+                    value=value,
+                )

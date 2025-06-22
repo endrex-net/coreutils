@@ -55,7 +55,7 @@ def timeout(
     return decorator
 
 
-def asyncbackoff(
+def asyncbackoff(  # noqa: C901
     attempt_timeout: Number | None,
     deadline: Number | None,
     pause: Number = 0,
@@ -114,14 +114,14 @@ def asyncbackoff(
     exceptions = tuple(exceptions) or ()
     exceptions += (asyncio.TimeoutError,)
 
-    def decorator(
+    def decorator(  # noqa: C901
         func: Callable[P, Coroutine[Any, Any, T]],
     ) -> Callable[P, Coroutine[Any, Any, T]]:
         if attempt_timeout is not None:
             func = timeout(attempt_timeout)(func)
 
         @wraps(func)
-        async def wrap(*args: P.args, **kwargs: P.kwargs) -> T:
+        async def wrap(*args: P.args, **kwargs: P.kwargs) -> T:  # noqa: C901
             last_exc = None
             tries = 0
 
