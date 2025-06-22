@@ -4,7 +4,10 @@ from collections.abc import Awaitable, Callable
 from functools import wraps
 from typing import ParamSpec, TypeVar
 
-from coreutils.prometheus.metrics.scheduler import job_duration_hist, job_failure_counter
+from coreutils.prometheus.metrics.scheduler import (
+    job_duration_hist,
+    job_failure_counter,
+)
 
 
 log = logging.getLogger(__name__)

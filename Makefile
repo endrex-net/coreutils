@@ -22,7 +22,7 @@ develop-ci: ##@Develop Create virtualenv for CI
 	uv sync --all-groups --all-extras
 
 test-ci: ##@Test Run tests with pytest and coverage in CI
-	.venv/bin/pytest ./$(TEST_FOLDER_NAME) --cov=./$(PROJECT_NAME) --cov-report=xml
+	.venv/bin/pytest ./$(TEST_FOLDER_NAME) --cov=./$(PROJECT_NAME)
 
 lint-ci: ruff mypy ##@Linting Run all linters in CI
 

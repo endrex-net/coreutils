@@ -88,7 +88,8 @@ def asyncbackoff(  # noqa: C901
     :param max_tries: is maximum count of execution attempts (>= 1).
     :param giveup: is a predicate function which can decide by a given
     :param statistic_class: statistic class
-    :param rate_limiter: rate limiter instance for limit calls the function by period
+    :param rate_limiter: rate limiter instance
+                         for limit calls the function by period
     """
 
     exceptions = exc + tuple(exceptions)
@@ -201,7 +202,8 @@ def asyncretry(
     :param giveup: is a predicate function which can decide by a given
     :param pause: is time gap between execution attempts.
     :param statistic_name: name filed for statistic instances
-    :param rate_limiter: rate limiter instance for limit calls the function by period
+    :param rate_limiter: rate limiter instance for limit calls the
+                         function by period
     """
 
     return asyncbackoff(

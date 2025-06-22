@@ -55,7 +55,13 @@ def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level.upper())
 
-    for _log in ["uvicorn", "uvicorn.error", "faststream", "pytest", "uvicorn.access"]:
+    for _log in [
+        "uvicorn",
+        "uvicorn.error",
+        "faststream",
+        "pytest",
+        "uvicorn.access",
+    ]:
         logging.getLogger(_log).handlers.clear()
         logging.getLogger(_log).propagate = True
 
@@ -67,13 +73,17 @@ def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -
         if issubclass(exc_type, KeyboardInterrupt):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
-        logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+        logging.error(
+            "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
+        )
 
     sys.excepthook = handle_exception
 
 
 def _add_correlation(
-    logger: logging.Logger, method_name: str, event_dict: structlog.typing.EventDict
+    logger: logging.Logger,
+    method_name: str,
+    event_dict: structlog.typing.EventDict,
 ) -> structlog.typing.EventDict:
     """Add request id to log message."""
     if request_id := correlation_id.get():
@@ -83,5 +93,9 @@ def _add_correlation(
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class LoggingConfig:
-    log_level: LogLevel = field(default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper()))
-    use_json: bool = field(default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true")
+    log_level: LogLevel = field(
+        default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper())
+    )
+    use_json: bool = field(
+        default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true"
+    )

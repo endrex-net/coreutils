@@ -8,7 +8,9 @@ from fastapi import Request, Response
 from coreutils.prometheus.metrics.rest import REQUEST_COUNT, REQUEST_LATENCY
 
 
-UUID_REGEX = re.compile(r"/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}")
+UUID_REGEX = re.compile(
+    r"/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+)
 
 
 def normalize_endpoint(path: str) -> str:
@@ -34,7 +36,9 @@ def is_monitorable_endpoint(path: str, route: Any | None, method: str) -> bool:
     return True
 
 
-async def prometheus_middleware(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+async def prometheus_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
     route = request.scope.get("route")
     if not is_monitorable_endpoint(request.url.path, route, request.method):
         return await call_next(request)
@@ -45,7 +49,13 @@ async def prometheus_middleware(request: Request, call_next: Callable[[Request],
 
     endpoint = route.path if route else normalize_endpoint(request.url.path)
 
-    REQUEST_LATENCY.labels(method=request.method, endpoint=endpoint).observe(process_time)
-    REQUEST_COUNT.labels(method=request.method, endpoint=endpoint, http_status=response.status_code).inc()
+    REQUEST_LATENCY.labels(method=request.method, endpoint=endpoint).observe(
+        process_time
+    )
+    REQUEST_COUNT.labels(
+        method=request.method,
+        endpoint=endpoint,
+        http_status=response.status_code,
+    ).inc()
 
     return response

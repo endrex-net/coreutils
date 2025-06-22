@@ -3,7 +3,7 @@ name = "coreutils"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11,<4.0"
+requires-python = ">=3.12,<4.0"
 dependencies = [
     "aiocache>=0.12.3",
     "asgi-correlation-id>=4.3.4",
@@ -70,7 +70,7 @@ exclude_also = [
 directory = "htmlcov"
 
 [tool.ruff]
-line-length = 120
+line-length = 88
 lint.select = [
     "BLE",
     "C90",
