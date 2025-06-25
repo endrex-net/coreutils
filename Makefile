@@ -19,16 +19,19 @@ clean-dev: ##@Develop Remove virtualenv
 
 develop-ci: ##@Develop Create virtualenv for CI
 	python -m pip install -U pip uv
-	uv sync
+	uv sync --all-groups --all-extras
 
 test-ci: ##@Test Run tests with pytest and coverage in CI
-	pytest ./$(TEST_FOLDER_NAME) --cov=./$(PROJECT_NAME) --cov-report=xml
+	.venv/bin/pytest ./$(TEST_FOLDER_NAME) --cov=./$(PROJECT_NAME)
 
 lint-ci: ruff mypy ##@Linting Run all linters in CI
 
+build-ci: ##@Build Run build in CI
+	uv build
+
 ruff: ##@Linting Run ruff
-	ruff check ./$(PROJECT_NAME)
+	.venv/bin/ruff check ./$(PROJECT_NAME)
 
 mypy: ##@Linting Run mypy
-	mypy --config-file ./pyproject.toml ./$(PROJECT_NAME)
+	.venv/bin/mypy --config-file ./pyproject.toml ./$(PROJECT_NAME)
 

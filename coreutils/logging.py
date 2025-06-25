@@ -6,6 +6,7 @@ from os import environ
 from types import TracebackType
 
 import structlog
+from asgi_correlation_id import correlation_id
 
 
 @unique
@@ -19,10 +20,11 @@ class LogLevel(StrEnum):
 
 def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -> None:
     shared_processors: list[structlog.typing.Processor] = [
+        _add_correlation,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
         structlog.processors.StackInfoRenderer(),
-        structlog.dev.set_exc_info,
+        structlog.processors.format_exc_info,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.contextvars.merge_contextvars,
     ]
@@ -53,12 +55,15 @@ def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -
     root_logger.addHandler(handler)
     root_logger.setLevel(log_level.upper())
 
-    for _log in ["uvicorn", "uvicorn.error", "faststream", "pytest"]:
+    for _log in [
+        "uvicorn",
+        "uvicorn.error",
+        "faststream",
+        "pytest",
+        "uvicorn.access",
+    ]:
         logging.getLogger(_log).handlers.clear()
         logging.getLogger(_log).propagate = True
-
-    logging.getLogger("uvicorn.access").handlers.clear()
-    logging.getLogger("uvicorn.access").propagate = False
 
     def handle_exception(
         exc_type: type[BaseException],
@@ -68,12 +73,29 @@ def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -
         if issubclass(exc_type, KeyboardInterrupt):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
-        logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+        logging.error(
+            "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
+        )
 
     sys.excepthook = handle_exception
 
 
+def _add_correlation(
+    logger: logging.Logger,
+    method_name: str,
+    event_dict: structlog.typing.EventDict,
+) -> structlog.typing.EventDict:
+    """Add request id to log message."""
+    if request_id := correlation_id.get():
+        event_dict["request_id"] = request_id
+    return event_dict
+
+
 @dataclass(frozen=True, kw_only=True, slots=True)
 class LoggingConfig:
-    log_level: LogLevel = field(default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper()))
-    use_json: bool = field(default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true")
+    log_level: LogLevel = field(
+        default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper())
+    )
+    use_json: bool = field(
+        default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true"
+    )
