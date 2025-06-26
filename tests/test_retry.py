@@ -336,3 +336,17 @@ async def test_asyncretry():
         await test()
 
     assert mana == 5
+
+
+async def test_repeat_on_success():
+    mana = 0
+
+    @coreutils.asyncretry(max_tries=2, repeat_on_success=True)
+    async def test() -> None:
+        nonlocal mana
+        mana += 1
+        return None
+
+    await test()
+
+    assert mana == 2
