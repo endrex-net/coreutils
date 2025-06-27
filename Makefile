@@ -5,7 +5,7 @@ TEST_FOLDER_NAME = tests
 develop: clean-dev ##@Develop Create virtualenv
 	python$(PYTHON_VERSION) -m venv .venv
 	.venv/bin/pip install -U pip uv
-	.venv/bin/uv sync
+	.venv/bin/uv sync --all-groups --all-extras
 	.venv/bin/pre-commit install
 
 local: ##@Develop Run dev containers for test

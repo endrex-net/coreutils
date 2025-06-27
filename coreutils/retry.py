@@ -67,6 +67,7 @@ def asyncbackoff(  # noqa: C901
     on_exception: Callable[[Exception], None] | None = None,
     statistic_name: str | None = None,
     statistic_class: type[BackoffStatistic] = BackoffStatistic,
+    repeat_on_success: bool = False,
 ) -> Callable[
     [Callable[P, Coroutine[Any, Any, T]]],
     Callable[P, Coroutine[Any, Any, T]],
@@ -126,7 +127,7 @@ def asyncbackoff(  # noqa: C901
             last_exc = None
             tries = 0
 
-            async def run() -> Any:
+            async def run() -> Any:  # noqa: C901
                 nonlocal last_exc, tries
 
                 loop = asyncio.get_running_loop()
@@ -139,10 +140,17 @@ def asyncbackoff(  # noqa: C901
                     try:
                         if on_attempt:
                             on_attempt(datetime.now())
-                        return await asyncio.wait_for(
+                        result = await asyncio.wait_for(
                             func(*args, **kwargs),
                             timeout=attempt_timeout,
                         )
+                        if (
+                            repeat_on_success
+                            and max_tries is not None
+                            and tries < max_tries
+                        ):
+                            continue
+                        return result
                     except asyncio.CancelledError:
                         statistic.cancels += 1
                         raise
@@ -186,6 +194,7 @@ def asyncretry(
     on_attempt: Callable[[datetime], None] | None = None,
     on_exception: Callable[[Exception], None] | None = None,
     statistic_name: str | None = None,
+    repeat_on_success: bool = False,
 ) -> Callable[
     [Callable[P, Coroutine[Any, Any, T]]],
     Callable[P, Coroutine[Any, Any, T]],
@@ -217,4 +226,5 @@ def asyncretry(
         pause=pause,
         statistic_class=RetryStatistic,
         statistic_name=statistic_name,
+        repeat_on_success=repeat_on_success,
     )
