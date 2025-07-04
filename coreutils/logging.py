@@ -6,7 +6,8 @@ from os import environ
 from types import TracebackType
 
 import structlog
-from asgi_correlation_id import correlation_id
+
+from coreutils.request_id.context import correlation_id
 
 
 @unique
