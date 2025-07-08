@@ -96,10 +96,11 @@ wheels = [
 
 [[package]]
 name = "coreutils"
-version = "0.1.0"
+version = "0.0.3"
 source = { virtual = "." }
 dependencies = [
     { name = "aiocache" },
+    { name = "packaging" },
     { name = "structlog" },
 ]
 
@@ -133,6 +134,7 @@ requires-dist = [
     { name = "aiocache", specifier = ">=0.12.3" },
     { name = "fastapi", marker = "extra == 'prometheus'", specifier = ">=0.115.13" },
     { name = "faststream", marker = "extra == 'faststream'", specifier = ">=0.5.43" },
+    { name = "packaging", specifier = ">=25.0" },
     { name = "prometheus-client", marker = "extra == 'prometheus'", specifier = ">=0.22.1" },
     { name = "redis", marker = "extra == 'redis'", specifier = ">=6.2.0" },
     { name = "structlog", specifier = ">=25.4.0" },
