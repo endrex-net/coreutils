@@ -35,7 +35,7 @@ def rate_limit[T](
                     wait_time = (
                         await _buffer.get()
                         + timedelta(seconds=per_seconds)
-                        - datetime.now()
+                        - datetime.now(UTC)
                     ).total_seconds()
                     if wait_time > 0:
                         logger.warning("[rate_limit] Waiting %.2fs ...", wait_time)
