@@ -1,0 +1,39 @@
+name: "[job] Run auto tests"
+
+on:
+  workflow_call:
+
+env:
+  APP_REDIS_DSN: redis://redis:6379/0
+
+jobs:
+  test:
+    name: Run service tests with pytest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - "3.12"
+          - "3.13"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup python ${{ matrix.python-version }} on ${{ matrix.os }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: make develop-ci
+
+      - name: Run tests
+        run: make test-ci
+
+      - name: Get Cover
+        uses: orgoro/coverage@v3.2
+        with:
+            coverageFile: ./coverage.xml
+            token: ${{ secrets.GITHUB_TOKEN }}
