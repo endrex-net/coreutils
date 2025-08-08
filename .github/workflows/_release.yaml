@@ -1,0 +1,36 @@
+name: "[job] Run release library"
+
+on:
+  workflow_call:
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-dist
+          path: dist/
+
+      - name: Sign the dists with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v3.0.1
+        with:
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
+
+      - name: Create Github release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          name: ${{ github.ref_name }}
+          body: Release new version of package **${{ github.event.repository.name }}** ${{ github.ref_name }}
+          files: |
+            dist/*
