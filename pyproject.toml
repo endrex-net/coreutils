@@ -1,6 +1,6 @@
 [project]
 name = "coreutils"
-version = "0.0.5"
+version = "0.0.7"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12,<4.0"
@@ -15,8 +15,8 @@ redis = [
     "redis>=6.2.0",
 ]
 prometheus = [
-    "fastapi>=0.115.13",
     "prometheus-client>=0.22.1",
+    "starlette>=0.47.3",
 ]
 faststream = [
     "faststream>=0.5.43",
@@ -25,6 +25,7 @@ faststream = [
 [dependency-groups]
 dev = [
     "coverage>=7.9.1",
+    "httpx>=0.28.1",
     "mypy>=1.16.0",
     "pre-commit>=4.2.0",
     "pytest>=8.4.1",
@@ -97,7 +98,7 @@ lint.select = [
 ]
 lint.ignore = ["ISC001"]
 lint.fixable = ["ALL"]
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint.isort]
 known-first-party = ["coreutils" , "tests"]
