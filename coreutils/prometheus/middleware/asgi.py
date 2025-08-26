@@ -27,7 +27,7 @@ def normalize_endpoint(path: str) -> str:
 
 
 def is_monitorable_endpoint(path: str, route: Any | None, method: str) -> bool:
-    ignore_paths = ["/monitoring", "/docs", "/metrics"]
+    ignore_paths = ["/docs", "/metrics"]
     ignore_methods = {"OPTIONS"}
 
     if method in ignore_methods:
