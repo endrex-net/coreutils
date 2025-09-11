@@ -3,11 +3,11 @@ from faststream.broker.message import StreamMessage
 from starlette.applications import Starlette
 
 from coreutils.request_id import (
-    AsgiCorrelationIdMiddleware,
-    BrokerCorrelationIdMiddleware,
     correlation_id,
     set_request_id,
 )
+from coreutils.request_id.middleware.asgi import AsgiCorrelationIdMiddleware
+from coreutils.request_id.middleware.broker import BrokerCorrelationIdMiddleware
 
 
 @pytest.fixture
