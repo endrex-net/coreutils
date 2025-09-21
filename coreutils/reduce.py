@@ -57,16 +57,12 @@ class AsyncReducer:
     async def _waiter(cls, future: asyncio.Future) -> RT:
         wait_future: asyncio.Future = asyncio.Future()
 
-        future.add_done_callback(
-            partial(cls._set_wait_future_result, wait_future=wait_future)
-        )
+        future.add_done_callback(partial(cls._set_wait_future_result, wait_future=wait_future))
 
         return await wait_future
 
     @staticmethod
-    def _set_wait_future_result(
-        result_future: asyncio.Future, wait_future: asyncio.Future
-    ) -> None:
+    def _set_wait_future_result(result_future: asyncio.Future, wait_future: asyncio.Future) -> None:
         if wait_future.cancelled():
             return
 
@@ -96,9 +92,7 @@ def reduced(
         @wraps(func)
         async def wrapped(self: IReduced, *args: P.args, **kwargs: P.kwargs) -> RT:
             key = (
-                key_func(*args, **kwargs)
-                if key_func
-                else f"{self.__class__.__name__}:{func.__name__}:{args}:{kwargs}"
+                key_func(*args, **kwargs) if key_func else f"{self.__class__.__name__}:{func.__name__}:{args}:{kwargs}"
             )
             return await self._reducer(func(self, *args, **kwargs), ident=key)
 

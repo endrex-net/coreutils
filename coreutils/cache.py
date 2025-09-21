@@ -21,9 +21,7 @@ def cached(key_func: Callable[..., str] | None = None, ttl: int = 60 * 60) -> Ca
         @wraps(func)
         async def wrapped(self: ICached, *args: P.args, **kwargs: P.kwargs) -> RT:
             key = (
-                key_func(*args, **kwargs)
-                if key_func
-                else f"{self.__class__.__name__}:{func.__name__}:{args}:{kwargs}"
+                key_func(*args, **kwargs) if key_func else f"{self.__class__.__name__}:{func.__name__}:{args}:{kwargs}"
             )
 
             cached_result = await self._cache.get(key)

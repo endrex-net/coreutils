@@ -55,9 +55,7 @@ def test_timeit_custom_time_func(logger):
         return a + b
 
     add(2, 3)
-    logger.info.assert_called_once_with(
-        {"event": "execution-time", "func_name": "add", "time": 0}
-    )
+    logger.info.assert_called_once_with({"event": "execution-time", "func_name": "add", "time": 0})
 
 
 def test_timeit_invalid_time_func(logger):

@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 REQUEST_HEADER: Final[str] = "X-Correlation-Id"
 
-FAILED_VALIDATION_MESSAGE: Final[str] = (
-    "Generated new request ID (%s), since request header value failed validation"
-)
+FAILED_VALIDATION_MESSAGE: Final[str] = "Generated new request ID (%s), since request header value failed validation"
 
 
 def is_valid_uuid4(uuid_: str) -> bool:
