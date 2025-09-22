@@ -74,7 +74,9 @@ def setup_logging(log_level: LogLevel = LogLevel.INFO, use_json: bool = False) -
         if issubclass(exc_type, KeyboardInterrupt):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
-        logging.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+        logging.error(
+            "Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback)
+        )
 
     sys.excepthook = handle_exception
 
@@ -92,5 +94,9 @@ def _add_correlation(
 
 @dataclass(frozen=True, kw_only=True, slots=True)
 class LoggingConfig:
-    log_level: LogLevel = field(default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper()))
-    use_json: bool = field(default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true")
+    log_level: LogLevel = field(
+        default_factory=lambda: LogLevel(environ.get("APP_LOG_LEVEL", "DEBUG").upper())
+    )
+    use_json: bool = field(
+        default_factory=lambda: environ.get("APP_LOG_JSON", "false").lower() == "true"
+    )

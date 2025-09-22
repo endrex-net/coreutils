@@ -144,7 +144,11 @@ def asyncbackoff(  # noqa: C901
                             func(*args, **kwargs),
                             timeout=attempt_timeout,
                         )
-                        if repeat_on_success and max_tries is not None and tries < max_tries:
+                        if (
+                            repeat_on_success
+                            and max_tries is not None
+                            and tries < max_tries
+                        ):
                             continue
                         return result
                     except asyncio.CancelledError:

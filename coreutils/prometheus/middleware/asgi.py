@@ -17,7 +17,9 @@ from coreutils.prometheus.metrics.rest import REQUEST_COUNT, REQUEST_LATENCY
 
 log = logging.getLogger(__name__)
 
-UUID_REGEX = re.compile(r"/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}")
+UUID_REGEX = re.compile(
+    r"/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+)
 
 
 def normalize_endpoint(path: str) -> str:
@@ -46,7 +48,9 @@ class AsgiPrometheusMiddleware:
 
     # Нормализация и фильтрация
     normalizer: Callable[[str], str] = field(default=normalize_endpoint)
-    monitor_predicate: Callable[[str, Any | None, str], bool] = field(default=is_monitorable_endpoint)
+    monitor_predicate: Callable[[str, Any | None, str], bool] = field(
+        default=is_monitorable_endpoint
+    )
 
     # Хуки записи метрик — меняйте, если у ваших метрик другие имена/метки
     record_count: Callable[[str, str, int], None] = field(
@@ -55,9 +59,9 @@ class AsgiPrometheusMiddleware:
         ).inc()
     )
     observe_latency: Callable[[str, str, float], None] = field(
-        default=lambda method, endpoint, seconds: REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(
-            seconds
-        )
+        default=lambda method, endpoint, seconds: REQUEST_LATENCY.labels(
+            method=method, endpoint=endpoint
+        ).observe(seconds)
     )
 
     # Включить "мягкий" fallback-мониторинг даже если route недоступен
@@ -135,7 +139,9 @@ class AsgiPrometheusMiddleware:
             final_status = (
                 status_code
                 if status_code is not None
-                else (HTTPStatus.OK if body_finished else HTTPStatus.INTERNAL_SERVER_ERROR)
+                else (
+                    HTTPStatus.OK if body_finished else HTTPStatus.INTERNAL_SERVER_ERROR
+                )
             )
             try:
                 self.record_count(method, endpoint, final_status)
