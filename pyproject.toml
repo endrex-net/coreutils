@@ -18,8 +18,15 @@ prometheus = [
     "prometheus-client>=0.22.1",
     "starlette>=0.47.3",
 ]
+nats_utils = [
+    "faststream>=0.5.43",
+    "nats-py>=2.10.0,<3",
+]
 faststream = [
     "faststream>=0.5.43",
+]
+signer_client = [
+    "aiohttp>=3.12.15",
 ]
 
 [dependency-groups]
