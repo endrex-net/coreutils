@@ -58,7 +58,9 @@ class FinanceAccount:
         raise ValueError(f"{finance_account_type} not supported")
 
     @staticmethod
-    def get_secondary_assets(finance_account_type: FinanceAccountType) -> Iterable[AssetType]:
+    def get_secondary_assets(
+        finance_account_type: FinanceAccountType,
+    ) -> Iterable[AssetType]:
         if finance_account_type == FinanceAccountType.BINANCE:
             return [AssetType("USDT")]
 
