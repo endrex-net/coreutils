@@ -1,8 +1,8 @@
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable, Coroutine
 from functools import wraps
 from logging import Logger, getLogger
 from time import monotonic
-from typing import ParamSpec, TypeVar
+from typing import Any, ParamSpec, TypeVar
 
 
 log = getLogger(__name__)
@@ -11,14 +11,18 @@ log = getLogger(__name__)
 P = ParamSpec("P")
 RT = TypeVar("RT")
 
+AsyncFuncType = Callable[P, Coroutine[Any, Any, RT]]
+
 
 def async_timeit(
     logger: Logger = log,
     time_func: Callable[[], float | int] = monotonic,
-) -> Callable[[Callable[P, Awaitable[RT]]], Callable[P, Awaitable[RT]]]:
+) -> Callable[
+    [Callable[P, Coroutine[Any, Any, RT]]], Callable[P, Coroutine[Any, Any, RT]]
+]:
     def _async_timeit(
-        func: Callable[P, Awaitable[RT]],
-    ) -> Callable[P, Awaitable[RT]]:
+        func: Callable[P, Coroutine[Any, Any, RT]],
+    ) -> Callable[P, Coroutine[Any, Any, RT]]:
         @wraps(func)
         async def wrapper(*args: P.args, **kwargs: P.kwargs) -> RT:
             start = time_func()
