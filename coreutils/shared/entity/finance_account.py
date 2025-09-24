@@ -41,20 +41,28 @@ class FinanceAccount:
 
     @cached_property
     def primary_asset(self) -> AssetType:
-        if self.type == FinanceAccountType.BINANCE:
-            return AssetType("USDC")
-
-        if self.type == FinanceAccountType.BYBIT:
-            return AssetType("USDT")
-
-        raise ValueError(f"{self.type} not supported")
+        return self.get_primary_asset(self.type)
 
     @cached_property
     def secondary_assets(self) -> Iterable[AssetType]:
-        if self.type == FinanceAccountType.BINANCE:
+        return self.get_secondary_assets(self.type)
+
+    @staticmethod
+    def get_primary_asset(finance_account_type: FinanceAccountType) -> AssetType:
+        if finance_account_type == FinanceAccountType.BINANCE:
+            return AssetType("USDC")
+
+        if finance_account_type == FinanceAccountType.BYBIT:
+            return AssetType("USDT")
+
+        raise ValueError(f"{finance_account_type} not supported")
+
+    @staticmethod
+    def get_secondary_assets(finance_account_type: FinanceAccountType) -> Iterable[AssetType]:
+        if finance_account_type == FinanceAccountType.BINANCE:
             return [AssetType("USDT")]
 
-        if self.type == FinanceAccountType.BYBIT:
+        if finance_account_type == FinanceAccountType.BYBIT:
             return []
 
-        raise ValueError(f"{self.type} not supported")
+        raise ValueError(f"{finance_account_type} not supported")
