@@ -38,8 +38,8 @@ class SignerFinanceAccount:
 class SignerSignRequest:
     method: HTTPMethod
     endpoint: str
-    query: Mapping[str, Any]
-    body: Mapping[str, Any]
+    query: Mapping[str, Any] | None = None
+    body: Mapping[str, Any] | None = None
     recv_window: int | None = None
     timestamp_ms: int | None = None
 
