@@ -1,18 +1,11 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
-from enum import StrEnum, unique
 from functools import cached_property
 
 from coreutils.shared.entity.asset import AssetType
-from coreutils.shared.entity.wallet import WalletType
+from coreutils.shared.entity.enum.finance_account import FinanceAccountType, WalletType
 from coreutils.shared.value_object.ids import FinanceAccountId, UserId
-
-
-@unique
-class FinanceAccountType(StrEnum):
-    BINANCE = "BINANCE"
-    BYBIT = "BYBIT"
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)
@@ -29,7 +22,7 @@ class FinanceAccount:
     type: FinanceAccountType
     properties: FinanceAccountProperties
     is_valid: bool
-    wallet_types: set[WalletType]
+    wallet_types: WalletType
 
     created_at: datetime | None = None
     updated_at: datetime | None = None

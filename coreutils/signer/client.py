@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import Any, NoReturn
 
 from aiohttp import ClientResponse, ClientSession
 from yarl import URL
@@ -41,7 +41,7 @@ class SignerClient:
         method: str,
         url: URL,
         json: dict | None = None,
-    ) -> ClientResponse:
+    ) -> dict[str, Any]:
         """Выполняет HTTP запрос и обрабатывает ответ"""
         async with self._session.request(
             method=method,
@@ -50,7 +50,7 @@ class SignerClient:
         ) as response:
             # Обработка успешных ответов (2xx)
             if 200 <= response.status < 300:
-                return response
+                return await response.json()
             # Обработка ошибок
             else:
                 await raise_signer_exception(response)
@@ -72,8 +72,7 @@ class SignerClient:
                 },
             },
         )
-        data = await response.json()
-        return SignerFinanceAccount(**data)
+        return SignerFinanceAccount(**response)
 
     async def update_finance_account(
         self,
@@ -89,8 +88,7 @@ class SignerClient:
                 },
             },
         )
-        data = await response.json()
-        return SignerFinanceAccount(**data)
+        return SignerFinanceAccount(**response)
 
     async def get_finance_account(
         self,
@@ -100,8 +98,7 @@ class SignerClient:
             method="GET",
             url=self._url / f"api/v1/finance-account/{finance_account_id}",
         )
-        data = await response.json()
-        return SignerFinanceAccount(**data)
+        return SignerFinanceAccount(**response)
 
     async def sign_request(
         self,
@@ -120,8 +117,7 @@ class SignerClient:
                 "timestamp_ms": sign_request.timestamp_ms,
             },
         )
-        data = await response.json()
-        return SignerSignedResponse(**data)
+        return SignerSignedResponse(**response)
 
     async def sign_websocket(
         self,
@@ -135,5 +131,4 @@ class SignerClient:
                 "stream": websocket_request.stream,
             },
         )
-        data = await response.json()
-        return SignerSignWebsocketResponse(**data)
+        return SignerSignWebsocketResponse(**response)
