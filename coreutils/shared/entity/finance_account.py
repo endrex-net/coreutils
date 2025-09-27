@@ -15,7 +15,7 @@ class FinanceAccountType(StrEnum):
     BYBIT = "BYBIT"
 
 
-@dataclass(frozen=True, kw_only=True, slots=True)
+@dataclass(kw_only=True, slots=True)
 class FinanceAccountProperties:
     connection_name: str
     api_key: str
