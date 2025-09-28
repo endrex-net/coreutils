@@ -4,21 +4,15 @@ from collections.abc import Iterable, MutableMapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from enum import StrEnum, unique
 from functools import cached_property
 from types import MappingProxyType
 
 from coreutils.shared.entity.asset import Asset, AssetType
-from coreutils.shared.entity.finance_account import FinanceAccount, FinanceAccountType
+from coreutils.shared.entity.finance_account import FinanceAccount
 from coreutils.shared.entity.transfer import Transfer
+from coreutils.shared.enums.finance_account_type import FinanceAccountType
+from coreutils.shared.enums.wallet_type import WalletType
 from coreutils.shared.value_object.ids import FinanceAccountId, WalletId
-
-
-@unique
-class WalletType(StrEnum):
-    SPOT = "SPOT"
-    MARGIN = "MARGIN"
-    FUTURES = "FUTURES"
 
 
 FINANCE_ACCOUNT_WALLET_MAPPING: MappingProxyType[
