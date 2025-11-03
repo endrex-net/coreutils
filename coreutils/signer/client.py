@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Any, NoReturn
 
 from aiohttp import ClientResponse, ClientSession
@@ -41,7 +42,7 @@ class SignerClient:
         method: str,
         url: URL,
         json: dict | None = None,
-    ) -> dict[str, Any]:
+    ) -> dict[str, Any] | None:
         """Выполняет HTTP запрос и обрабатывает ответ"""
         async with self._session.request(
             method=method,
@@ -50,6 +51,8 @@ class SignerClient:
         ) as response:
             # Обработка успешных ответов (2xx)
             if 200 <= response.status < 300:
+                if response.status == HTTPStatus.NO_CONTENT:
+                    return None
                 return await response.json()
             # Обработка ошибок
             else:
@@ -72,7 +75,7 @@ class SignerClient:
                 },
             },
         )
-        return SignerFinanceAccount(**response)
+        return SignerFinanceAccount(**response)  # type: ignore[arg-type]
 
     async def update_finance_account(
         self,
@@ -88,7 +91,25 @@ class SignerClient:
                 },
             },
         )
-        return SignerFinanceAccount(**response)
+        return SignerFinanceAccount(**response)  # type: ignore[arg-type]
+
+    async def delete_finance_account(
+        self,
+        finance_account_id: str,
+    ) -> None:
+        await self._make_request(
+            method="DELETE",
+            url=self._url / f"api/v1/finance-account/{finance_account_id}",
+        )
+
+    async def invalidate_finance_account(
+        self,
+        finance_account_id: str,
+    ) -> None:
+        await self._make_request(
+            method="POST",
+            url=self._url / f"api/v1/finance-account/{finance_account_id}/invalidate",
+        )
 
     async def get_finance_account(
         self,
@@ -98,7 +119,7 @@ class SignerClient:
             method="GET",
             url=self._url / f"api/v1/finance-account/{finance_account_id}",
         )
-        return SignerFinanceAccount(**response)
+        return SignerFinanceAccount(**response)  # type: ignore[arg-type]
 
     async def sign_request(
         self,
@@ -117,7 +138,7 @@ class SignerClient:
                 "timestamp_ms": sign_request.timestamp_ms,
             },
         )
-        return SignerSignedResponse(**response)
+        return SignerSignedResponse(**response)  # type: ignore[arg-type]
 
     async def sign_websocket(
         self,
@@ -131,4 +152,4 @@ class SignerClient:
                 "stream": websocket_request.stream,
             },
         )
-        return SignerSignWebsocketResponse(**response)
+        return SignerSignWebsocketResponse(**response)  # type: ignore[arg-type]
