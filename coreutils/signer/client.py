@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Any, NoReturn
 
 from aiohttp import ClientResponse, ClientSession
@@ -50,7 +51,7 @@ class SignerClient:
         ) as response:
             # Обработка успешных ответов (2xx)
             if 200 <= response.status < 300:
-                if response.status == 204:
+                if response.status == HTTPStatus.NO_CONTENT:
                     return None
                 return await response.json()
             # Обработка ошибок
