@@ -1,4 +1,5 @@
 import logging
+from dataclasses import replace
 
 from faststream.nats import NatsBroker
 from nats.js.api import ConsumerConfig
@@ -35,10 +36,18 @@ class NatsStreamManager:
             raise RuntimeError("NATS JetStream is not initialized")
 
         try:
-            await self.__stream.stream_info(stream.name)
-            log.info("Stream %s already exists, updating...", stream.name)
+            stream_info = await self.__stream.stream_info(stream.name)
+            log.info(
+                "Stream %s already exists with config %s, updating...",
+                stream.name,
+                stream_info.config,
+            )
 
-            await self.__stream.update_stream(stream.config)
+            new_subjects = stream.config.subjects or []
+            new_subjects.extend(stream_info.config.subjects or [])
+            stream_config = replace(stream_info.config, subjects=new_subjects)
+
+            await self.__stream.update_stream(stream_config)
             log.info("Stream %s updated successfully", stream.name)
         except NotFoundError:
             log.info("Creating new stream %s...", stream.name)
