@@ -45,7 +45,9 @@ class NatsStreamManager:
 
             new_subjects = stream.config.subjects or []
             new_subjects.extend(stream_info.config.subjects or [])
-            stream_config = replace(stream_info.config, subjects=new_subjects)
+            stream_config = replace(
+                stream_info.config, subjects=list(set(new_subjects))
+            )
 
             await self.__stream.update_stream(stream_config)
             log.info("Stream %s updated successfully", stream.name)
