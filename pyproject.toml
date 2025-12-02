@@ -28,6 +28,10 @@ faststream = [
 signer_client = [
     "aiohttp>=3.12.15",
 ]
+cache = [
+    "cachetools>=6.2.2",
+    "types-cachetools>=6.2.0.20251022",
+]
 
 [dependency-groups]
 dev = [

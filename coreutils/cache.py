@@ -1,17 +1,27 @@
 import abc
-from collections.abc import Awaitable, Callable
+import asyncio
+import typing
+from collections.abc import Awaitable, Callable, Sequence
 from functools import wraps
 from typing import Concatenate, ParamSpec, TypeVar
 
-from aiocache import BaseCache
+import cachetools
 
 
 P = ParamSpec("P")
 RT = TypeVar("RT")
 
 
+class ICache(typing.Protocol):
+    async def get(self, key: str) -> typing.Any: ...
+
+    async def set(
+        self, key: str, value: typing.Any, ttl: int | None = None
+    ) -> bool | None: ...
+
+
 class ICached(abc.ABC):
-    _cache: BaseCache
+    _cache: ICache
 
 
 def cached(key_func: Callable[..., str] | None = None, ttl: int = 60 * 60) -> Callable:
@@ -36,3 +46,62 @@ def cached(key_func: Callable[..., str] | None = None, ttl: int = 60 * 60) -> Ca
         return wrapped
 
     return decorator
+
+
+class LFUCache(ICache):
+    def __init__(self, maxsize: int = 1024) -> None:
+        self._cache: cachetools.LFUCache = cachetools.LFUCache(maxsize=maxsize)
+        self._lock = asyncio.Lock()
+
+    async def get(self, key: str) -> typing.Any:
+        async with self._lock:
+            return self._cache.get(key)
+
+    async def set(self, key: str, value: typing.Any, ttl: int | None = None) -> bool:
+        async with self._lock:
+            self._cache[key] = value
+
+        return True
+
+
+class LRUCache(ICache):
+    def __init__(self, maxsize: int = 1024):
+        self._cache: cachetools.LRUCache = cachetools.LRUCache(maxsize=maxsize)
+        self._lock = asyncio.Lock()
+
+    async def get(self, key: str) -> typing.Any:
+        async with self._lock:
+            return self._cache.get(key)
+
+    async def set(self, key: str, value: typing.Any, ttl: int | None = None) -> bool:
+        async with self._lock:
+            self._cache[key] = value
+
+        return True
+
+
+class CombinedCache(ICache):
+    def __init__(
+        self,
+        caches: Sequence[ICache],
+    ):
+        self._caches = caches
+
+    async def get(self, key: str) -> typing.Any:
+        missed_caches = []
+        for cache in self._caches:
+            value = await cache.get(key)
+
+            if value is None:
+                missed_caches.append(cache)
+
+            if value is not None:
+                for missed_cache in missed_caches:
+                    await missed_cache.set(key, value)
+
+                return value
+
+    async def set(
+        self, key: str, value: typing.Any, ttl: int | None = None, **kwargs: dict
+    ) -> bool | None:
+        return all([cache.set(key, value, ttl=ttl) for cache in self._caches])
