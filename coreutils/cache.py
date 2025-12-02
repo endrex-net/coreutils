@@ -48,7 +48,7 @@ def cached(key_func: Callable[..., str] | None = None, ttl: int = 60 * 60) -> Ca
     return decorator
 
 
-class LFUCache(ICache):
+class LFUCache:
     def __init__(self, maxsize: int = 1024) -> None:
         self._cache: cachetools.LFUCache = cachetools.LFUCache(maxsize=maxsize)
         self._lock = asyncio.Lock()
@@ -64,7 +64,7 @@ class LFUCache(ICache):
         return True
 
 
-class LRUCache(ICache):
+class LRUCache:
     def __init__(self, maxsize: int = 1024):
         self._cache: cachetools.LRUCache = cachetools.LRUCache(maxsize=maxsize)
         self._lock = asyncio.Lock()
@@ -80,7 +80,7 @@ class LRUCache(ICache):
         return True
 
 
-class CombinedCache(ICache):
+class CombinedCache:
     def __init__(
         self,
         caches: Sequence[ICache],
