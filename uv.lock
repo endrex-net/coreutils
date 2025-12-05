@@ -117,6 +117,15 @@ wheels = [
 ]
 
 [[package]]
+name = "cachetools"
+version = "6.2.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/44/ca1675be2a83aeee1886ab745b28cda92093066590233cc501890eb8417a/cachetools-6.2.2.tar.gz", hash = "sha256:8e6d266b25e539df852251cfd6f990b4bc3a141db73b939058d809ebd2590fc6", size = 31571, upload-time = "2025-11-13T17:42:51.465Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e6/46/eb6eca305c77a4489affe1c5d8f4cae82f285d9addd8de4ec084a7184221/cachetools-6.2.2-py3-none-any.whl", hash = "sha256:6c09c98183bf58560c97b2abfcedcbaf6a896a490f534b031b661d3723b45ace", size = 11503, upload-time = "2025-11-13T17:42:50.232Z" },
+]
+
+[[package]]
 name = "certifi"
 version = "2025.6.15"
 source = { registry = "https://pypi.org/simple" }
@@ -187,6 +196,10 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+cache = [
+    { name = "cachetools" },
+    { name = "types-cachetools" },
+]
 faststream = [
     { name = "faststream" },
 ]
@@ -223,6 +236,7 @@ dev = [
 requires-dist = [
     { name = "aiocache", specifier = ">=0.12.3" },
     { name = "aiohttp", marker = "extra == 'signer-client'", specifier = ">=3.12.15" },
+    { name = "cachetools", marker = "extra == 'cache'", specifier = ">=6.2.2" },
     { name = "faststream", marker = "extra == 'faststream'", specifier = ">=0.5.43" },
     { name = "faststream", marker = "extra == 'nats-utils'", specifier = ">=0.5.43" },
     { name = "nats-py", marker = "extra == 'nats-utils'", specifier = ">=2.10.0,<3" },
@@ -231,8 +245,9 @@ requires-dist = [
     { name = "redis", marker = "extra == 'redis'", specifier = ">=6.2.0" },
     { name = "starlette", marker = "extra == 'prometheus'", specifier = ">=0.47.3" },
     { name = "structlog", specifier = ">=25.4.0" },
+    { name = "types-cachetools", marker = "extra == 'cache'", specifier = ">=6.2.0.20251022" },
 ]
-provides-extras = ["redis", "prometheus", "nats-utils", "faststream", "signer-client"]
+provides-extras = ["redis", "prometheus", "nats-utils", "faststream", "signer-client", "cache"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -944,6 +959,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/79/b9/6e672db4fec07349e7a8a8172c1a6ae235c58679ca29c3f86a61b5e59ff3/structlog-25.4.0.tar.gz", hash = "sha256:186cd1b0a8ae762e29417095664adf1d6a31702160a46dacb7796ea82f7409e4", size = 1369138, upload-time = "2025-06-02T08:21:12.971Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a0/4a/97ee6973e3a73c74c8120d59829c3861ea52210667ec3e7a16045c62b64d/structlog-25.4.0-py3-none-any.whl", hash = "sha256:fe809ff5c27e557d14e613f45ca441aabda051d119ee5a0102aaba6ce40eed2c", size = 68720, upload-time = "2025-06-02T08:21:11.43Z" },
+]
+
+[[package]]
+name = "types-cachetools"
+version = "6.2.0.20251022"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3b/a8/f9bcc7f1be63af43ef0170a773e2d88817bcc7c9d8769f2228c802826efe/types_cachetools-6.2.0.20251022.tar.gz", hash = "sha256:f1d3c736f0f741e89ec10f0e1b0138625023e21eb33603a930c149e0318c0cef", size = 9608, upload-time = "2025-10-22T03:03:58.16Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/2d/8d821ed80f6c2c5b427f650bf4dc25b80676ed63d03388e4b637d2557107/types_cachetools-6.2.0.20251022-py3-none-any.whl", hash = "sha256:698eb17b8f16b661b90624708b6915f33dbac2d185db499ed57e4997e7962cad", size = 9341, upload-time = "2025-10-22T03:03:57.036Z" },
 ]
 
 [[package]]
