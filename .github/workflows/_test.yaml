@@ -23,10 +23,10 @@ jobs:
         image: redis
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup python ${{ matrix.python-version }} on ${{ matrix.os }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
