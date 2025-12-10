@@ -14,6 +14,7 @@ class Asset:
     type: AssetType
     amount: Decimal
     amount_usd: Decimal
+    equity: Decimal
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
