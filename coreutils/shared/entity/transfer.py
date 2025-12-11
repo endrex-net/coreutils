@@ -3,6 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from coreutils.shared.entity.asset import AssetType
+from coreutils.shared.enums.finance_account_type import FinanceAccountType
 from coreutils.shared.value_object.ids import WalletId
 
 
@@ -20,3 +21,5 @@ class Transfer:
     amount: Decimal
     amount_usd: Decimal
     created_at: datetime
+    exchange: FinanceAccountType
+    external_id: str
