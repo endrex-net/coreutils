@@ -8,7 +8,7 @@ from coreutils.shared.entity.finance_account import (
     FinanceAccountType,
 )
 from coreutils.shared.entity.wallet import WalletType
-from coreutils.shared.value_object.ids import FinanceAccountId, UserId
+from coreutils.shared.value_object.ids import ExchangeId, FinanceAccountId, UserId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -32,6 +32,7 @@ class SignerFinanceAccount:
     type: FinanceAccountType
     is_valid: bool
     wallet_types: Sequence[WalletType]
+    exchange_id: ExchangeId
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
