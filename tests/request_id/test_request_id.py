@@ -1,5 +1,6 @@
 import pytest
-from faststream.broker.message import StreamMessage
+from faststream import StreamMessage
+from faststream._internal.context import ContextRepo
 from starlette.applications import Starlette
 
 from coreutils.request_id import (
@@ -22,7 +23,7 @@ def asgi_middleware(app) -> AsgiCorrelationIdMiddleware:
 
 @pytest.fixture
 def broker_middleware():
-    return BrokerCorrelationIdMiddleware()
+    return BrokerCorrelationIdMiddleware(None, context=ContextRepo())
 
 
 async def test_asgi_middleware_set_request_id(

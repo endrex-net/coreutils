@@ -4,7 +4,7 @@ import logging
 import traceback
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from faststream import BaseMiddleware
@@ -12,7 +12,7 @@ from faststream.nats import NatsBroker
 
 
 if TYPE_CHECKING:
-    from faststream.broker.message import StreamMessage
+    from faststream import StreamMessage
     from faststream.types import AsyncFuncAny
 
 log = logging.getLogger("faststream")
@@ -31,22 +31,58 @@ class DeadLetterMessage:
     correlation_id: str | None = None
 
 
-class DeadLetterQueueMiddleware(BaseMiddleware):
+class DeadLetterQueueMiddleware:
     def __init__(
         self,
         broker: NatsBroker,
         dead_letter_stream: str,
         dead_letter_subject: str,
-        message: Any | None = None,
     ) -> None:
-        self.__broker = broker
-        self.__dlq_stream = dead_letter_stream
-        self.__dlq_subject = dead_letter_subject
+        self._broker = broker
+        self._dlq_stream = dead_letter_stream
+        self._dlq_subject = dead_letter_subject
 
-        super().__init__(message)
+    def __call__(self, *args: Any, **kwargs: Any) -> _DeadLetterQueueMiddleware:
+        return _DeadLetterQueueMiddleware(
+            self._broker,
+            self._dlq_stream,
+            self._dlq_subject,
+            *args,
+            **kwargs,
+        )
 
-    def __call__(self, _message: Any) -> Self:
-        return self
+
+class _DeadLetterQueueMiddleware(BaseMiddleware):
+    def __init__(
+        self,
+        broker: NatsBroker,
+        dead_letter_stream: str,
+        dead_letter_subject: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        self._broker = broker
+        self._dlq_stream = dead_letter_stream
+        self._dlq_subject = dead_letter_subject
+        super().__init__(*args, **kwargs)
+
+    async def consume_scope(
+        self,
+        call_next: AsyncFuncAny,
+        msg: StreamMessage[Any],
+    ) -> Any:
+        err: Exception | None = None
+        try:
+            result = await call_next(await self.on_consume(msg))
+
+        except Exception as e:  # noqa: BLE001
+            err = e
+
+        else:
+            return result
+
+        finally:
+            await self.after_consume_with_message(msg, err)
 
     async def after_consume_with_message(
         self, message: StreamMessage[Any], err: Exception | None
@@ -76,8 +112,8 @@ class DeadLetterQueueMiddleware(BaseMiddleware):
             correlation_id=correlation_id,
         )
 
-        await self.__broker.publish(
-            dlq_message, subject=self.__dlq_subject, stream=self.__dlq_stream
+        await self._broker.publish(
+            dlq_message, subject=self._dlq_subject, stream=self._dlq_stream
         )
 
         log.error(
@@ -86,21 +122,3 @@ class DeadLetterQueueMiddleware(BaseMiddleware):
             error,
             retry_count,
         )
-
-    async def consume_scope(
-        self,
-        call_next: AsyncFuncAny,
-        message: StreamMessage[Any],
-    ) -> Any:
-        err: Exception | None = None
-        try:
-            result = await call_next(await self.on_consume(message))
-
-        except Exception as e:  # noqa: BLE001
-            err = e
-
-        else:
-            return result
-
-        finally:
-            await self.after_consume_with_message(message, err)

@@ -1,6 +1,6 @@
 [project]
 name = "coreutils"
-version = "0.0.20"
+version = "0.0.23"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12,<4.0"
@@ -19,7 +19,7 @@ prometheus = [
     "starlette>=0.47.3",
 ]
 nats_utils = [
-    "faststream>=0.5.43",
+    "faststream>=0.6",
     "nats-py>=2.10.0,<3",
 ]
 faststream = [
