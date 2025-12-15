@@ -4,6 +4,7 @@ from dataclasses import replace
 from faststream.nats import NatsBroker
 from nats.js.api import ConsumerConfig
 from nats.js.errors import NotFoundError
+from nats.js.manager import JetStreamManager
 
 from coreutils.nats_utils.stream import Stream
 
@@ -13,8 +14,7 @@ log = logging.getLogger("faststream")
 
 class NatsStreamManager:
     def __init__(self, broker: NatsBroker):
-        self.__broker = broker
-        self.__stream = broker.stream
+        self._stream_manager = JetStreamManager(broker.connection)
 
     async def initialize_stream(self, stream: Stream) -> None:
         try:
@@ -32,11 +32,11 @@ class NatsStreamManager:
             raise
 
     async def _create_or_update_stream(self, stream: Stream) -> None:
-        if self.__stream is None:
-            raise RuntimeError("NATS JetStream is not initialized")
+        if self._stream_manager is None:
+            raise RuntimeError("NATS JetStream Manager is not initialized")
 
         try:
-            stream_info = await self.__stream.stream_info(stream.name)
+            stream_info = await self._stream_manager.stream_info(stream.name)
             log.info(
                 "Stream %s already exists with config %s, updating...",
                 stream.name,
@@ -49,11 +49,11 @@ class NatsStreamManager:
                 stream_info.config, subjects=list(set(new_subjects))
             )
 
-            await self.__stream.update_stream(stream_config)
+            await self._stream_manager.update_stream(stream_config)
             log.info("Stream %s updated successfully", stream.name)
         except NotFoundError:
             log.info("Creating new stream %s...", stream.name)
-            await self.__stream.add_stream(stream.config)
+            await self._stream_manager.add_stream(stream.config)
             log.info("Stream %s created successfully", stream.name)
         except Exception as exc:
             log.error("Failed to create/update stream %s: %s", stream.name, exc)
@@ -64,14 +64,14 @@ class NatsStreamManager:
         stream_name: str,
         consumer_config: ConsumerConfig,
     ) -> None:
-        if self.__stream is None:
+        if self._stream_manager is None:
             raise RuntimeError("NATS JetStream is not initialized")
 
         if consumer_config.name is None:
             raise ValueError("Consumer name is required")
 
         try:
-            await self.__stream.consumer_info(stream_name, consumer_config.name)
+            await self._stream_manager.consumer_info(stream_name, consumer_config.name)
             log.info(
                 "Consumer %s already exists in stream %s",
                 consumer_config.name,
@@ -85,7 +85,7 @@ class NatsStreamManager:
                 stream_name,
             )
 
-            await self.__stream.add_consumer(stream_name, consumer_config)
+            await self._stream_manager.add_consumer(stream_name, consumer_config)
             log.info(
                 "Consumer %s created successfully for stream %s",
                 consumer_config.name,
