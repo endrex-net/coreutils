@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import Iterable
 
-from coreutils.healthcheck.dto import CheckResult
+from coreutils.healthcheck.dto import CheckResult, ReadinessResult
 from coreutils.healthcheck.interface import HealthCheck
 
 
@@ -15,7 +15,7 @@ class ReadinessRunner:
         self._checks = tuple(checks)
         self._timeout_s = timeout_s
 
-    async def run(self) -> dict[str, CheckResult]:
+    async def run(self) -> ReadinessResult:
         async def _one(ch: HealthCheck) -> tuple[str, CheckResult]:
             try:
                 res = await ch.check()
@@ -39,4 +39,7 @@ class ReadinessRunner:
                 "_timeout", CheckResult(ok=False, error="Readiness timeout")
             )
 
-        return results
+        return ReadinessResult(
+            ok=all(res.ok for res in results.values()),
+            checks=results,
+        )

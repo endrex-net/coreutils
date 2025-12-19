@@ -28,10 +28,10 @@ async def test_runner_collects_results() -> None:
 
     res = await runner.run()
 
-    assert set(res.keys()) == {"postgres", "redis"}
-    assert res["postgres"].ok is True
-    assert res["redis"].ok is False
-    assert res["redis"].error == "down"
+    assert set(res.checks.keys()) == {"postgres", "redis"}
+    assert res.checks["postgres"].ok is True
+    assert res.checks["redis"].ok is False
+    assert res.checks["redis"].error == "down"
 
 
 async def test_runner_marks_timeout_bucket_when_some_pending() -> None:
@@ -42,11 +42,11 @@ async def test_runner_marks_timeout_bucket_when_some_pending() -> None:
     res = await runner.run()
 
     # fast успел, slow нет => будет общий маркер таймаута
-    assert "fast" in res
-    assert res["fast"].ok is True
-    assert "_timeout" in res
-    assert res["_timeout"].ok is False
-    assert res["_timeout"].error == "Readiness timeout"
+    assert "fast" in res.checks
+    assert res.checks["fast"].ok is True
+    assert "_timeout" in res.checks
+    assert res.checks["_timeout"].ok is False
+    assert res.checks["_timeout"].error == "Readiness timeout"
 
 
 async def test_runner_converts_unhandled_exception_to_failed_checkresult() -> None:
@@ -55,8 +55,8 @@ async def test_runner_converts_unhandled_exception_to_failed_checkresult() -> No
 
     res = await runner.run()
 
-    assert "nats" in res
-    assert res["nats"].ok is False
-    assert res["nats"].error is not None
-    assert "RuntimeError" in res["nats"].error
-    assert "boom" in res["nats"].error
+    assert "nats" in res.checks
+    assert res.checks["nats"].ok is False
+    assert res.checks["nats"].error is not None
+    assert "RuntimeError" in res.checks["nats"].error
+    assert "boom" in res.checks["nats"].error

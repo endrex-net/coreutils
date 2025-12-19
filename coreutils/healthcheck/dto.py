@@ -10,22 +10,6 @@ class CheckResult:
     latency_ms: int | None = None
     error: str | None = None
 
-
-@dataclass(slots=True)
-class LivenessDto:
-    ok: bool
-    message: str
-
-    def to_dict(self) -> dict[str, Any]:
-        return {"ok": self.ok, "message": self.message}
-
-
-@dataclass(slots=True)
-class CheckDto:
-    ok: bool
-    latency_ms: int | None = None
-    error: str | None = None
-
     def to_dict(self) -> dict[str, Any]:
         data: dict[str, Any] = {"ok": self.ok}
         # latency_ms/error удобно опускать, если None (чтобы ответ был чище)
@@ -37,9 +21,18 @@ class CheckDto:
 
 
 @dataclass(slots=True)
-class ReadinessDto:
+class LivenessResult:
     ok: bool
-    checks: dict[str, CheckDto]
+    message: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"ok": self.ok, "message": self.message}
+
+
+@dataclass(slots=True)
+class ReadinessResult:
+    ok: bool
+    checks: dict[str, CheckResult]
 
     def to_dict(self) -> dict[str, Any]:
         return {
