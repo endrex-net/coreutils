@@ -2,6 +2,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from http import HTTPMethod
 from typing import Any
+from uuid import UUID
 
 from coreutils.shared.entity.finance_account import (
     FinanceAccountProperties,
@@ -17,6 +18,8 @@ class SignerCreateFinanceAccount:
     type: FinanceAccountType
     wallet_types: Sequence[WalletType]
     properties: FinanceAccountProperties
+    master_finance_account_id: FinanceAccountId | None
+    auth_integration_id: UUID | None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -33,6 +36,8 @@ class SignerFinanceAccount:
     is_valid: bool
     wallet_types: Sequence[WalletType]
     exchange_id: ExchangeId
+    master_finance_account_id: FinanceAccountId | None
+    auth_integration_id: UUID | None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
