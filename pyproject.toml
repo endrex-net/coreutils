@@ -28,9 +28,14 @@ faststream = [
 signer_client = [
     "aiohttp>=3.12.15",
 ]
+sqlalchemy = [
+    "sqlalchemy>=2.0.44",
+    "asyncpg>=0.30.0",
+]
 
 [dependency-groups]
 dev = [
+    "asyncly>=0.5.1",
     "coverage>=7.9.1",
     "httpx>=0.28.1",
     "mypy>=1.16.0",
