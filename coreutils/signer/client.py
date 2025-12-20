@@ -4,6 +4,7 @@ from typing import Any, NoReturn
 from aiohttp import ClientResponse, ClientSession
 from yarl import URL
 
+from coreutils.shared.value_object.ids import FinanceAccountId
 from coreutils.signer.dto import (
     SignerCreateFinanceAccount,
     SignerFinanceAccount,
@@ -27,7 +28,10 @@ async def raise_signer_exception(response: ClientResponse) -> NoReturn:
 
 class SignerClient:
     def __init__(
-        self, url: URL | str, session: ClientSession, client_name: str = "SignerClient"
+        self,
+        url: URL | str,
+        session: ClientSession,
+        client_name: str = "SignerClient",
     ):
         self._url = url if isinstance(url, URL) else URL(url)
         self._session = session
@@ -36,27 +40,6 @@ class SignerClient:
     @property
     def url(self) -> URL:
         return self._url
-
-    async def _make_request(
-        self,
-        method: str,
-        url: URL,
-        json: dict | None = None,
-    ) -> dict[str, Any] | None:
-        """Выполняет HTTP запрос и обрабатывает ответ"""
-        async with self._session.request(
-            method=method,
-            url=url,
-            json=json,
-        ) as response:
-            # Обработка успешных ответов (2xx)
-            if 200 <= response.status < 300:
-                if response.status == HTTPStatus.NO_CONTENT:
-                    return None
-                return await response.json()
-            # Обработка ошибок
-            else:
-                await raise_signer_exception(response)
 
     async def create_finance_account(
         self,
@@ -95,7 +78,7 @@ class SignerClient:
 
     async def delete_finance_account(
         self,
-        finance_account_id: str,
+        finance_account_id: FinanceAccountId,
     ) -> None:
         await self._make_request(
             method="DELETE",
@@ -104,7 +87,7 @@ class SignerClient:
 
     async def invalidate_finance_account(
         self,
-        finance_account_id: str,
+        finance_account_id: FinanceAccountId,
     ) -> None:
         await self._make_request(
             method="POST",
@@ -123,7 +106,7 @@ class SignerClient:
 
     async def sign_request(
         self,
-        finance_account_id: str,
+        finance_account_id: FinanceAccountId,
         sign_request: SignerSignRequest,
     ) -> SignerSignedResponse:
         response = await self._make_request(
@@ -142,7 +125,7 @@ class SignerClient:
 
     async def sign_websocket(
         self,
-        finance_account_id: str,
+        finance_account_id: FinanceAccountId,
         websocket_request: SignerSignWebsocketRequest,
     ) -> SignerSignWebsocketResponse:
         response = await self._make_request(
@@ -153,3 +136,33 @@ class SignerClient:
             },
         )
         return SignerSignWebsocketResponse(**response)  # type: ignore[arg-type]
+
+    async def check(
+        self,
+        finance_account_id: FinanceAccountId,
+    ) -> None:
+        await self._make_request(
+            method="POST",
+            url=self._url / f"api/v1/finance-account/{finance_account_id}/check",
+        )
+
+    async def _make_request(
+        self,
+        method: str,
+        url: URL,
+        json: dict | None = None,
+    ) -> dict[str, Any] | None:
+        """Выполняет HTTP запрос и обрабатывает ответ"""
+        async with self._session.request(
+            method=method,
+            url=url,
+            json=json,
+        ) as response:
+            # Обработка успешных ответов (2xx)
+            if 200 <= response.status < 300:
+                if response.status == HTTPStatus.NO_CONTENT:
+                    return None
+                return await response.json()
+            # Обработка ошибок
+            else:
+                await raise_signer_exception(response)
