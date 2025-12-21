@@ -32,6 +32,9 @@ sqlalchemy = [
     "sqlalchemy>=2.0.44",
     "asyncpg>=0.30.0",
 ]
+dishka = [
+    "dishka>=1.7.2,<2"
+]
 
 [dependency-groups]
 dev = [

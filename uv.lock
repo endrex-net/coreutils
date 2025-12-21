@@ -287,7 +287,7 @@ wheels = [
 
 [[package]]
 name = "coreutils"
-version = "0.0.23"
+version = "0.0.25"
 source = { virtual = "." }
 dependencies = [
     { name = "aiocache" },
@@ -296,6 +296,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+dishka = [
+    { name = "dishka" },
+]
 faststream = [
     { name = "faststream" },
 ]
@@ -338,6 +341,7 @@ requires-dist = [
     { name = "aiocache", specifier = ">=0.12.3" },
     { name = "aiohttp", marker = "extra == 'signer-client'", specifier = ">=3.12.15" },
     { name = "asyncpg", marker = "extra == 'sqlalchemy'", specifier = ">=0.30.0" },
+    { name = "dishka", marker = "extra == 'dishka'", specifier = ">=1.7.2,<2" },
     { name = "faststream", marker = "extra == 'faststream'", specifier = ">=0.5.43" },
     { name = "faststream", marker = "extra == 'nats-utils'", specifier = ">=0.6" },
     { name = "nats-py", marker = "extra == 'nats-utils'", specifier = ">=2.10.0,<3" },
@@ -348,7 +352,7 @@ requires-dist = [
     { name = "starlette", marker = "extra == 'prometheus'", specifier = ">=0.47.3" },
     { name = "structlog", specifier = ">=25.4.0" },
 ]
-provides-extras = ["redis", "prometheus", "nats-utils", "faststream", "signer-client", "sqlalchemy"]
+provides-extras = ["redis", "prometheus", "nats-utils", "faststream", "signer-client", "sqlalchemy", "dishka"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -493,6 +497,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/0a/6e/1c8331ddf91ca4730ab3086a0f1be19c65510a33b5a441cb334e7a2d2560/cryptography-46.0.3-cp38-abi3-win32.whl", hash = "sha256:6276eb85ef938dc035d59b87c8a7dc559a232f954962520137529d77b18ff1df", size = 3036695, upload-time = "2025-10-15T23:18:08.672Z" },
     { url = "https://files.pythonhosted.org/packages/90/45/b0d691df20633eff80955a0fc7695ff9051ffce8b69741444bd9ed7bd0db/cryptography-46.0.3-cp38-abi3-win_amd64.whl", hash = "sha256:416260257577718c05135c55958b674000baef9a1c7d9e8f306ec60d71db850f", size = 3501720, upload-time = "2025-10-15T23:18:10.632Z" },
     { url = "https://files.pythonhosted.org/packages/e8/cb/2da4cc83f5edb9c3257d09e1e7ab7b23f049c7962cae8d842bbef0a9cec9/cryptography-46.0.3-cp38-abi3-win_arm64.whl", hash = "sha256:d89c3468de4cdc4f08a57e214384d0471911a3830fcdaf7a8cc587e42a866372", size = 2918740, upload-time = "2025-10-15T23:18:12.277Z" },
+]
+
+[[package]]
+name = "dishka"
+version = "1.7.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/d7/1be31f5ef32387059190353f9fa493ff4d07a1c75fa856c7566ca45e0800/dishka-1.7.2.tar.gz", hash = "sha256:47d4cb5162b28c61bf5541860e605ed5eaf5c667122299c7ef657c86fc8d5a49", size = 68132, upload-time = "2025-09-24T21:23:05.135Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/b9/89381173b4f336e986d72471198614806cd313e0f85c143ccb677c310223/dishka-1.7.2-py3-none-any.whl", hash = "sha256:f6faa6ab321903926b825b3337d77172ee693450279b314434864978d01fbad3", size = 94774, upload-time = "2025-09-24T21:23:03.246Z" },
 ]
 
 [[package]]
