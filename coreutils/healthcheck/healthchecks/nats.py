@@ -18,7 +18,7 @@ class NatsHealthCheck:
         try:
 
             async def _do() -> None:
-                await self._broker.ping(self._timeout_s)
+                await self._broker.connection._send_ping()
 
             await run_with_timeout(_do(), timeout_s=self._timeout_s)
             return CheckResult(ok=True, latency_ms=now_ms(started))
