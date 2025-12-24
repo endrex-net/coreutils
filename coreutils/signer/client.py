@@ -52,10 +52,8 @@ class SignerClient:
                 "user_id": str(finance_account.user_id),
                 "type": finance_account.type,
                 "wallet_types": finance_account.wallet_types,
-                "properties": {
-                    "api_key": finance_account.properties.api_key,
-                    "api_secret": finance_account.properties.api_secret,
-                },
+                "api_key": finance_account.api_key,
+                "api_secret": finance_account.api_secret,
             },
         )
         return SignerFinanceAccount(**response)  # type: ignore[arg-type]
@@ -68,10 +66,8 @@ class SignerClient:
             method="PATCH",
             url=self._url / f"api/v1/finance-account/{finance_account.id}",
             json={
-                "properties": {
-                    "api_key": finance_account.properties.api_key,
-                    "api_secret": finance_account.properties.api_secret,
-                },
+                "api_key": finance_account.api_key,
+                "api_secret": finance_account.api_secret,
             },
         )
         return SignerFinanceAccount(**response)  # type: ignore[arg-type]

@@ -5,7 +5,6 @@ from typing import Any
 from uuid import UUID
 
 from coreutils.shared.entity.finance_account import (
-    FinanceAccountProperties,
     FinanceAccountType,
 )
 from coreutils.shared.entity.wallet import WalletType
@@ -17,7 +16,8 @@ class SignerCreateFinanceAccount:
     user_id: UserId
     type: FinanceAccountType
     wallet_types: Sequence[WalletType]
-    properties: FinanceAccountProperties
+    api_key: str
+    api_secret: str
     master_finance_account_id: FinanceAccountId | None
     auth_integration_id: UUID | None
 
@@ -25,7 +25,8 @@ class SignerCreateFinanceAccount:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class SignerUpdateFinanceAccount:
     id: FinanceAccountId
-    properties: FinanceAccountProperties
+    api_key: str
+    api_secret: str
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

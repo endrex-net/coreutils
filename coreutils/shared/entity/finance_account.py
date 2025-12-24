@@ -9,29 +9,19 @@ from coreutils.shared.enums.wallet_type import WalletType
 from coreutils.shared.value_object.ids import FinanceAccountId, UserId
 
 
-@dataclass(kw_only=True, slots=True)
-class FinanceAccountProperties:
-    connection_name: str
-    api_key: str
-    api_secret: str
-
-
 @dataclass(frozen=True, kw_only=True, slots=True)
 class FinanceAccount:
     id: FinanceAccountId
     user_id: UserId
     type: FinanceAccountType
-    properties: FinanceAccountProperties
+    api_key: str
+    api_secret: str
     is_valid: bool
     wallet_types: set[WalletType]
 
     created_at: datetime | None = None
     updated_at: datetime | None = None
     deleted_at: datetime | None = None
-
-    @cached_property
-    def connection_name(self) -> str:
-        return self.properties.connection_name
 
     @cached_property
     def primary_asset(self) -> AssetType:
