@@ -37,6 +37,7 @@ class SignerFinanceAccount:
     is_valid: bool
     wallet_types: Sequence[WalletType]
     exchange_id: ExchangeId
+    api_key: str
     master_finance_account_id: FinanceAccountId | None
     auth_integration_id: UUID | None
 
